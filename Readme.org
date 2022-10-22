@@ -1,0 +1,44 @@
+* IHPCSS Mentoring Guide
+
+This document was developed as part of the [[https://ihpcss.org][International HPC Summer School]].
+It provides a background of the school's mentoring program, including particular chapters specifically for mentors and mentees.
+
+* Creating a PDF
+
+=Mentoring-Guide.org= can be converted to latex using either [[https://pandoc.org][pandoc]] or [[https://orgmode.org][Emacs's Org-mode]] (see [[https://orgmode.org/org.html#LaTeX-Export][Latex Exporter]]).
+The tex file can then be used to generate a pdf.
+
+** Pandoc
+Run the following command to generate the tex file
+#+begin_src sh
+pandoc -f org -t latex -s -o Mentoring-Guide.tex Mentoring-Guide.org
+#+end_src
+
+** Emacs shell script
+The following can be used an executable script file.
+It will launch emacs in batch mode and run the appropriate export commands.
+It should work with most versions of emacs since org-mode has been built-in for a while.
+
+#+name: oxlatex.em
+#+begin_src sh
+:;exec emacs -batch -l   "$0" -f : "$@" --no-site-file -q  # -*- Emacs-Lisp -*-
+;     @emacs -batch -l "%~f0" -f :  %*  --no-site-file -q  & goto :EOF
+;
+; This script will export a latex document from an org file.
+;
+; Usage:  oxlatex.em  org-file-name
+;
+(defun : ()
+  (find-file (nth 5 command-line-args))
+  (condition-case nil
+      (org-latex-export-to-latex)
+    (error nil) )
+  (save-buffer) )
+;:EOF
+#+end_src
+
+** PDF Generation
+Run the following command to generate the PDF document.
+#+begin_src sh
+pdflatex --file-line-error --synctex=1 Mentoring-Guide.tex
+#+end_src
